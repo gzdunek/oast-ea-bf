@@ -1,33 +1,23 @@
-/**
- * Some predefined delays (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
-}
+// import { List } from 'immutable';
+import { parseFile } from './parser/parser';
 
-/**
- * Returns a Promise<string> that resolves after given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - Number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
-}
+const main = async () => {
+  // const startArguments = List(process.argv.map(String)).skip(2);
 
-// Below are examples of using TSLint errors suppression
-// Here it is suppressing missing type definitions for greeter function
+  // if (startArguments.isEmpty()) {
+  //   console.error('No file to read');
+  //   process.exitCode = 1;
+  //
+  //   return;
+  // }
 
-// tslint:disable-next-line typedef
-export async function greeter(name) {
-  // tslint:disable-next-line no-unsafe-any no-return-await
-  return await delayedHello(name, Delays.Long);
-}
+  try {
+    // const parsedFile = await parseFile(startArguments.get<string>(0, ''));
+    const parsedFile = await parseFile('/Users/grzegorz/Projects/oast-ea-bf/src/test-file.txt');
+    console.log(parsedFile.demands.toJS());
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+main();
