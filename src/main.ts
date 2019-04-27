@@ -1,4 +1,5 @@
 // import { List } from 'immutable';
+import { solveUsingBruteForce } from './dap/brute-force/brute-force';
 import { parseFile } from './parser/parser';
 
 const main = async () => {
@@ -14,7 +15,9 @@ const main = async () => {
   try {
     // const parsedFile = await parseFile(startArguments.get<string>(0, ''));
     const parsedFile = await parseFile('/Users/grzegorz/Projects/oast-ea-bf/src/test-file.txt');
-    console.log(parsedFile.demands.toJS());
+    const solutions = solveUsingBruteForce(parsedFile);
+    console.log(solutions[0]);
+    console.log(solutions.length);
   } catch (e) {
     console.log(e);
   }

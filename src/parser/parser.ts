@@ -57,15 +57,18 @@ const parseDemand = (demandAsString: string): Demand => {
     startNodeId: parseInt(lineSeparated[0], 0),
     endNodeId: parseInt(lineSeparated[1], 0),
     volume: parseInt(lineSeparated[2], 0),
-    paths: lines.skip(2).map(
-      (line: string): Path => {
-        const linePath = List(line.split(' '));
+    paths: lines
+      .skip(2)
+      .filter((val: string) => val.length > 0)
+      .map(
+        (line: string): Path => {
+          const linePath = List(line.split(' '));
 
-        return {
-          id: parseInt(linePath.get(0, ''), 0),
-          links: linePath.skip(1).map((val: string) => parseInt(val, 0)),
-        };
-      },
-    ),
+          return {
+            id: parseInt(linePath.get(0, ''), 0),
+            links: linePath.skip(1).map((val: string) => parseInt(val, 0)),
+          };
+        },
+      ),
   };
 };
