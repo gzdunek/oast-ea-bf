@@ -1,36 +1,30 @@
 import { List } from 'immutable';
-import { Demand } from '../../types/demand';
 import { Graph } from '../../types/graph';
-import { combineArrays } from './combine-arrays';
+import { computeLinkLoads } from '../link-computation';
 
-const generateSolutionsForColumn = (demand: Demand): List<List<number>> => {
-  let allDemandColumnCombinations: List<List<number>> = List();
-  const generateDemandColumn = (demandVolume: number, demandColumn: List<number>, pathIndex: number): List<List<number>> => {
-    for (let demandDistributionPerPath = 0; demandDistributionPerPath <= demandVolume; demandDistributionPerPath = demandDistributionPerPath + 1) {
-      const updatedDemandColumn = demandColumn.set(pathIndex, demandDistributionPerPath);
-      if (pathIndex < demand.paths.size - 1) {
-        generateDemandColumn(demandVolume - demandDistributionPerPath, updatedDemandColumn, pathIndex + 1);
-      }
-      if (pathIndex === demand.paths.size - 1) {
-        allDemandColumnCombinations = allDemandColumnCombinations.push(updatedDemandColumn);
-      }
+export const solveUsingBruteforce = (graph: Graph, allSolutions: [][][]) => {
+  let bestSolution: [][] = [];
+
+  for (const [index, singleSolution] of allSolutions.entries()) {
+    const linkLoads = computeLinkLoads(graph, singleSolution);
+    let maxOverloads = List();
+    let objectiveFunctionValue = List();
+
+    linkLoads.forEach((linkLoad: number, linkIndex: number) => {
+      const link = graph.links.get(linkIndex);
+      // @ts-ignore
+      const linkCapacity = link.numberOfFiberPairsInCable * link.numberOfLambdasInFiber;
+      const linkOverload = linkLoad - linkCapacity;
+      maxOverloads = maxOverloads.push(Math.max(0, linkOverload));
+    });
+
+    objectiveFunctionValue = objectiveFunctionValue.set(index, Math.max(...maxOverloads));
+
+    if (objectiveFunctionValue.get(index) === 0) {
+      bestSolution = singleSolution;
+      break;
     }
+  }
 
-    return allDemandColumnCombinations.filter((columnValues: List<number>) => getSum(columnValues) === demand.volume);
-  };
-
-  return generateDemandColumn(demand.volume, List(), 0);
-};
-
-const getSum = (demandColumn: List<number>): number => demandColumn.reduce((reduction: number, value: number) => reduction + value, 0);
-
-// const linkCapacity = link.numberOfFiberPairsInCable * link.numberOfLambdasInFiber;
-
-export const solveUsingBruteForce = (graph: Graph): [][] => {
-  const solutionsForColumnsPerDemands: List<number>[][] = graph.demands
-    .map(generateSolutionsForColumn)
-    .map((el: List<List<number>>) => el.toArray())
-    .toArray();
-
-  return combineArrays(solutionsForColumnsPerDemands);
+  return bestSolution;
 };

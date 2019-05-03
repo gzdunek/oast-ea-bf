@@ -1,5 +1,6 @@
 // import { List } from 'immutable';
-import { solveUsingBruteForce } from './dap/brute-force/brute-force';
+import { solveUsingBruteforce } from './dap/brute-force/brute-force';
+import { generateAllSolutions } from './dap/brute-force/solutions-generation';
 import { parseFile } from './parser/parser';
 
 const main = async () => {
@@ -7,17 +8,17 @@ const main = async () => {
 
   // if (startArguments.isEmpty()) {
   //   console.error('No file to read');
-  //   process.exitCode = 1;
+  //   process.exitCode = 1;x
   //
   //   return;
   // }
 
   try {
-    // const parsedFile = await parseFile(startArguments.get<string>(0, ''));
-    const parsedFile = await parseFile('/Users/grzegorz/Projects/oast-ea-bf/src/test-file.txt');
-    const solutions = solveUsingBruteForce(parsedFile);
-    console.log(solutions[0]);
-    console.log(solutions.length);
+    // const graph = await parseFile(startArguments.get<string>(0, ''));
+    const graph = await parseFile('/Users/grzegorz/Projects/oast-ea-bf/src/test-file.txt');
+    const solutions = generateAllSolutions(graph);
+    const bestSolution = solveUsingBruteforce(graph, solutions);
+    console.log(bestSolution);
   } catch (e) {
     console.log(e);
   }

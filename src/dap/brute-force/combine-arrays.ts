@@ -21,8 +21,10 @@ export function combineArrays(array_of_arrays: any) {
     // tslint:disable-next-line:no-function-expression variable-name no-any
     return odometer.reduce(function(accumulator: any, odometer_value: any, odometer_index: any) {
       // tslint:disable-next-line:prefer-template
-      return '' + accumulator + array_of_arrays[odometer_index][odometer_value];
-    }, '');
+      accumulator.push(array_of_arrays[odometer_index][odometer_value]);
+
+      return accumulator;
+    }, []);
   }
 
   // @ts-ignore
