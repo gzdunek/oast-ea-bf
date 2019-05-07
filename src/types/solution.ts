@@ -1,4 +1,6 @@
+import { CostAndLinkLoads } from './cost-and-link-loads';
+
 export interface Solution {
   allocation: Allocation;
-  cost: number;
+  costAndLinkLoads: CostAndLinkLoads;
 }

@@ -2,46 +2,46 @@ import { EvolutionAlgorithmConfig } from '../../types/evolution-algorithm-config
 import { EvolutionAlgorithmState } from '../../types/evolution-algorithm-state';
 import { Graph } from '../../types/graph';
 import { Solution } from '../../types/solution';
-import { computeAllocationCost } from '../link-computation';
 import { createPopulation } from './create-population';
 import { cross } from './cross';
 import { mutate } from './mutate';
 import { sortSolutions } from './utils';
 
-export const solveUsingEvolutionAlgorithm = (graph: Graph, config: EvolutionAlgorithmConfig) => {
+export const solveUsingEvolutionAlgorithm = (graph: Graph, config: EvolutionAlgorithmConfig, computeAllocationCostFunction: Function): Solution => {
   const algorithmState: EvolutionAlgorithmState = {
     time: 0,
     mutationsCount: 0,
     noChangeGenerations: 0,
   };
-  let population = createPopulation(config.startPopulationAmount, graph);
+  let population = createPopulation(config.startPopulationAmount, graph, computeAllocationCostFunction);
   let iteration = 0;
   let bestCostAndAllocation = getSolutionCostAndAllocation(population[0]);
   const startTime = new Date().getTime();
   let offsprings: Solution[] = [];
-  while (!shouldStop(algorithmState, config) && bestCostAndAllocation.cost !== 0) {
+  while (!shouldStop(algorithmState, config) && bestCostAndAllocation.costAndLinkLoads.cost !== 0) {
     console.log('iteration ', iteration);
     offsprings = cross(population, config.crossoverProbability);
     mutate(offsprings, config.mutationProbability, algorithmState);
     offsprings = offsprings.map((offspring: Solution) => ({
       allocation: offspring.allocation,
-      cost: computeAllocationCost(graph, offspring.allocation),
+      costAndLinkLoads: computeAllocationCostFunction(graph, offspring.allocation),
     }));
     population.push(...offsprings);
     population = getAmountOfBestSolutions(population, config.startPopulationAmount);
     const newBestCostAndAllocation = getSolutionCostAndAllocation(population[0]);
-    if (bestCostAndAllocation.cost <= newBestCostAndAllocation.cost) {
+    if (bestCostAndAllocation.costAndLinkLoads.cost <= newBestCostAndAllocation.costAndLinkLoads.cost) {
       algorithmState.noChangeGenerations += 1;
-      console.log('current solution ', newBestCostAndAllocation.cost);
     } else {
-      console.log('else current solution ', newBestCostAndAllocation);
       algorithmState.noChangeGenerations = 0;
       bestCostAndAllocation = newBestCostAndAllocation;
     }
     algorithmState.time = new Date().getTime() - startTime;
     iteration += 1;
+    console.log('current best solution ', newBestCostAndAllocation.costAndLinkLoads.cost);
+    console.log(`current time ${algorithmState.time / 1000} s`);
   }
-  console.log(bestCostAndAllocation);
+
+  return bestCostAndAllocation;
 };
 
 const getAmountOfBestSolutions = (solutions: Solution[], amount: number): Solution[] => {
@@ -50,7 +50,7 @@ const getAmountOfBestSolutions = (solutions: Solution[], amount: number): Soluti
 
 const getSolutionCostAndAllocation = (solutions: Solution) => {
   return {
-    cost: solutions.cost,
+    costAndLinkLoads: solutions.costAndLinkLoads,
     allocation: solutions.allocation,
   };
 };

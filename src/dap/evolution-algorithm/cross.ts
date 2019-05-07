@@ -17,8 +17,8 @@ export const cross = (population: Solution[], crossoverProbability: number): Sol
           offsprings[1].push(parents[i + 1].allocation[j]);
         }
       }
-      newPopulation.push({ allocation: offsprings[0], cost: Number.MAX_SAFE_INTEGER });
-      newPopulation.push({ allocation: offsprings[1], cost: Number.MAX_SAFE_INTEGER });
+      newPopulation.push({ allocation: offsprings[0], costAndLinkLoads: { cost: Number.MAX_SAFE_INTEGER, linkLoads: [] } });
+      newPopulation.push({ allocation: offsprings[1], costAndLinkLoads: { cost: Number.MAX_SAFE_INTEGER, linkLoads: [] } });
     }
   }
 

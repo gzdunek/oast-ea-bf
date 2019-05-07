@@ -3,10 +3,9 @@ import { Demand } from '../../types/demand';
 import { Graph } from '../../types/graph';
 import { Path } from '../../types/path';
 import { Solution } from '../../types/solution';
-import { computeAllocationCost } from '../link-computation';
 import { sortSolutions } from './utils';
 
-export const createPopulation = (populationAmount: number, graph: Graph) => {
+export const createPopulation = (populationAmount: number, graph: Graph, computeAllocationCostFunction: Function) => {
   const population: Allocation[] = [];
 
   for (let i = 0; i < populationAmount; i += 1) {
@@ -24,19 +23,16 @@ export const createPopulation = (populationAmount: number, graph: Graph) => {
           allocation[demandIndex].push(availableVolume);
         }
       });
-      // shuffleArray(allocation[demandIndex]);
     });
     population.push(allocation);
   }
 
-  return sortSolutions(getSolutions(graph, population));
+  return sortSolutions(getSolutions(graph, population, computeAllocationCostFunction));
 };
 
-const getSolutions = (graph: Graph, allocations: Allocation[]): Solution[] => {
+const getSolutions = (graph: Graph, allocations: Allocation[], computeAllocationCostFunction: Function): Solution[] => {
   return allocations.map((allocation: Allocation) => ({
     allocation,
-    cost: computeAllocationCost(graph, allocation),
+    costAndLinkLoads: computeAllocationCostFunction(graph, allocation),
   }));
 };
-
-// const shuffleArray = <T extends {}>(arr: T[]): T[] => arr.sort(() => math.random(-0.5, 0.5));
