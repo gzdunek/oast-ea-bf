@@ -5,7 +5,7 @@ import { Problem } from './types/problem';
 
 const main = async () => {
   const problemType = Problem.Dap;
-  const solveMethod = Method.Evolution;
+  const solveMethod = Method.BruteForce;
   const filePath = '/Users/grzegorz/Projects/oast-ea-bf/src/net4.txt';
   const seed = 'oast';
   const eaStartupConfig: EvolutionAlgorithmConfig = {

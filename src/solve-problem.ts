@@ -1,8 +1,8 @@
 import * as math from 'mathjs';
-import { solveDapUsingBruteforce, solveDdapUsingBruteforce } from './dap/brute-force/brute-force';
-import { generateAllSolutions } from './dap/brute-force/solutions-generation';
-import { solveUsingEvolutionAlgorithm } from './dap/evolution-algorithm/evolution-algorithm';
-import { computeDapAllocationCost, computeDdapAllocationCost } from './dap/link-computation';
+import { solveDapUsingBruteforce, solveDdapUsingBruteforce } from './problem-solvers/brute-force/brute-force';
+import { generateAllSolutions } from './problem-solvers/brute-force/solutions-generation';
+import { solveUsingEvolutionAlgorithm } from './problem-solvers/evolution-algorithm/evolution-algorithm';
+import { computeDapAllocationCost, computeDdapAllocationCost } from './problem-solvers/link-computation';
 import { parseFile } from './parser/parser';
 import { EvolutionAlgorithmConfig } from './types/evolution-algorithm-config';
 import { Method } from './types/method';
